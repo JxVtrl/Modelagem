@@ -1,7 +1,7 @@
 # Grupo C - Modelagem Computacional
 
 ## Integrantes do grupo C
--   André Barros                    ()
+-   André Barros                    (andreb308)
 -   João Vinicius Vitral            (JxVtrl)
 -   Vinicius Carvalho Monnerat      (ViniciusCMB)
 -   Jorge Cruz                      ()
