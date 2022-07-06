@@ -59,12 +59,12 @@ function calculateResult(array_1, array_2) {
     })
 
     // verificando se os arrays tem o mesmo tamanho
-    if (array_1 > array_2) {
+    if (array_1.length > array_2.length) {
         let qtd = array_1.length - array_2.length
-         for (let i = 0; i < qtd; i++) {
+        for (let i = 0; i < qtd; i++) {
             array_2.unshift(0)
         }
-    } else if (array_2 > array_1) {
+    } else if (array_2.length > array_1.length) {
         let qtd = array_2.length - array_1.length
         for (let i = 0; i < qtd; i++) {
             array_1.unshift(0)
@@ -92,6 +92,7 @@ function calculateResult(array_1, array_2) {
             }
         }
 
+        console.log(array_result)
         var result = array_result.reverse().join('')
 
     } else if (operacao_type == 'Subtração') {
@@ -123,7 +124,8 @@ function calculateResult(array_1, array_2) {
 
         console.log(array_result)
         var result = array_result.reverse().join('')
-        if (temp_array) result *= -1
+        if (temp_array.length > 0)
+            result *= -1
         
     }
     
