@@ -49,6 +49,9 @@ function consoleFun(array_1, array_2) {
 }
 
 function calculateResult(array_1, array_2) {
+    var array_result = []
+    console.clear()
+
     // transformando os arrays em arrays de números
     array_1.map((value, index) => {
         array_1[index] = parseInt(value)
@@ -71,63 +74,52 @@ function calculateResult(array_1, array_2) {
         }
     }
 
-    array_1.reverse()
-    array_2.reverse()
-
-    consoleFun(array_1, array_2)
-    
-    var array_result = []
-
     if (operacao_type == 'Soma') {
         // somando os arrays
-        for (var i = 0; i < array_1.length; i++) {
+        for (let i = 0; i < array_1.length; i++) {
             array_result[i] = array_1[i] + array_2[i]
         }
 
         // se algum valor for maior que 9, soma ao próximo valor
-        for (var i = 0; i < array_result.length; i++) {
+        for (let i = 0; i < array_result.length; i++) {
             if (array_result[i] > 9) {
                 array_result[i] -= 10
-                array_result[i + 1] += 1
+                array_result[i - 1] += 1
             }
         }
 
-        console.log(array_result)
-        var result = array_result.reverse().join('')
-
     } else if (operacao_type == 'Subtração') {
-        // caso o array_2 seja maior que o array_1, inverte os arrays
-        var temp_array = []
-        if (array_2 > array_1) {
-            temp_array = array_1
+        // verificar qual array tem o maior valor
+        if (array_1.join('') < array_2.join('')) {
+            var aux = array_1
             array_1 = array_2
-            array_2 = temp_array
+            array_2 = aux
         }
 
-        // subtraindo os arrays
-        for (var i = 0; i < array_1.length; i++) {
+        // subtraindo valores dos arrays
+        for (let i = 0; i < array_1.length; i++) {
             array_result[i] = array_1[i] - array_2[i]
         }
 
-        // se algum valor for menor que 0, soma ao próximo valor do array_1
-        for (var i = 0; i < array_result.length; i++) {
+        // se algum valor for menor que 0, soma ao próximo valor
+        for (let i = 0; i < array_result.length; i++) {
             if (array_result[i] < 0) {
                 array_result[i] += 10
-                array_result[i + 1] -= 1
+                array_result[i - 1] -= 1
             }
         }
-        
-        // remove os 0s desnecessários
-        while (array_result[array_result.length - 1] == 0) {
-            array_result.pop()
+
+        // removendo os 0s desnecessários
+        while(array_result[0] == 0) {
+            array_result.shift()
         }
 
-        console.log(array_result)
-        var result = array_result.reverse().join('')
-        if (temp_array.length > 0)
-            result *= -1
-        
+        if (aux && aux.length > 0) {
+            array_result.unshift('-')
+        }
+
     }
-    
+        
+    var result = array_result.join('')   
     result_div.innerHTML = `Resultado: ${result}`
 }
