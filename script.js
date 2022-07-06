@@ -25,7 +25,9 @@ var select_listener = operacao_select.addEventListener("input", () => {
     operacao_input_div.innerHTML = 
         `
             <input type="number" placeholder="Valor 1" id="first_value" />
+            <p>
             ${operacao_type == 'Soma' ? '+' : '-'}
+            </p>
             <input type="number" placeholder="Valor 2" id="second_value" />
         `
 })
@@ -121,5 +123,5 @@ function calculateResult(array_1, array_2) {
     }
         
     var result = array_result.join('')   
-    result_div.innerHTML = `Resultado: ${result}`
+    result_div.innerHTML = result
 }
