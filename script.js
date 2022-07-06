@@ -1,12 +1,10 @@
 var operacao_select = document.getElementById('select')
-var operacao_type
-
 var operacao_input_father = document.getElementById('input_father')
 var operacao_input_div = document.getElementById('input_div')
 var result_div = document.getElementById('result_div')
-
 var operacao_btn_calculate = document.getElementById('btn_calculate')
 
+var operacao_type
 
 // Escutando o evento de seleção de operação
 var select_listener = operacao_select.addEventListener("input", () => {
