@@ -80,13 +80,28 @@ function calculateResult(array_1, array_2) {
             array_result[i] = array_1[i] + array_2[i]
         }
 
-        // se algum valor for maior que 9, soma ao próximo valor
-        for (let i = 0; i < array_result.length; i++) {
-            if (array_result[i] > 9) {
-                array_result[i] -= 10
-                array_result[i - 1] += 1
+        // Base temporaria, funciona de 2 - 10!!
+        var base = 10;
+
+        // Se algum valor for maior que a base, soma ao proximo valor
+        for (let i = 0; i < array_result.length; i++)
+        {
+            if (array_result[i] >= base)
+            {
+                array_result[i] -= base;
+
+                // Evitar indice negativo. Ex.: caso 99 + 99
+                if (i == 0) 
+                {
+                    array_result.unshift(1);
+                }
+                else
+                {
+                    array_result[i - 1] += 1;
+                }
             }
         }
+        // Site para ajudar a verificar: https://www.calculadoraonline.com.br/operacoes-bases
 
     } else if (operacao_type == 'Subtração') {
         // verificar qual array tem o maior valor
