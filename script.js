@@ -75,7 +75,7 @@ function calculateResult(array_1, array_2) {
     }
 
     // Base temporária, funciona de 2 - 10!!
-    var base = 2;
+    var base = 10;
 
     if (operacao_type == 'Soma') {
         // somando os arrays
