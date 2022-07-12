@@ -74,23 +74,23 @@ function calculateResult(array_1, array_2) {
         }
     }
 
+    // Base temporária, funciona de 2 - 10!!
+    var base = 2;
+
     if (operacao_type == 'Soma') {
         // somando os arrays
         for (let i = 0; i < array_1.length; i++) {
             array_result[i] = array_1[i] + array_2[i]
         }
 
-        // Base temporaria, funciona de 2 - 10!!
-        var base = 10;
-
-        // Se algum valor for maior que a base, soma ao proximo valor
+        // Se algum valor for maior que a base, soma ao próximo valor
         for (let i = 0; i < array_result.length; i++)
         {
             if (array_result[i] >= base)
             {
                 array_result[i] -= base;
 
-                // Evitar indice negativo. Ex.: caso 99 + 99
+                // Evitar índice negativo. Ex.: caso 99 + 99
                 if (i == 0) 
                 {
                     array_result.unshift(1);
@@ -98,6 +98,12 @@ function calculateResult(array_1, array_2) {
                 else
                 {
                     array_result[i - 1] += 1;
+                }
+
+                // Um número anterior pode ficar maior que a base
+                if (array_result[i - 1] >= base)
+                {
+                    i -= 2;
                 }
             }
         }
@@ -116,16 +122,24 @@ function calculateResult(array_1, array_2) {
             array_result[i] = array_1[i] - array_2[i]
         }
 
-        // se algum valor for menor que 0, soma ao próximo valor
-        for (let i = 0; i < array_result.length; i++) {
-            if (array_result[i] < 0) {
-                array_result[i] += 10
-                array_result[i - 1] -= 1
+        // Se algum valor for menor que 0, soma a base ao próximo valor
+        for (let i = 0; i < array_result.length; i++) 
+        {
+            if (array_result[i] < 0) 
+            {
+                array_result[i] += base;
+                array_result[i - 1] -= 1;
             }
         }
 
         // removendo os 0s desnecessários
-        while(array_result[0] == 0) {
+        while(array_result[0] == 0) 
+        {
+            // Não remover o 0 se só houver ele
+            if (array_result.length == 1)
+            {
+                break;
+            }
             array_result.shift()
         }
 
