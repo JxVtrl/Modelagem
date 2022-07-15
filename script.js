@@ -6,6 +6,14 @@ var operacao_btn_calculate = document.getElementById('btn_calculate')
 
 var operacao_type
 
+var base_select = document.getElementById('basen');
+var base;
+
+// "Escutando o evento" de seleção de base
+var base_listener = base_select.addEventListener("input", () => {
+    base = base_select.value;
+});
+
 // Escutando o evento de seleção de operação
 var select_listener = operacao_select.addEventListener("input", () => {
     result_div.innerHTML = ''
@@ -73,9 +81,6 @@ function calculateResult(array_1, array_2) {
             array_1.unshift(0)
         }
     }
-
-    // Base temporária, funciona de 2 - 10!!
-    var base = 10;
 
     if (operacao_type == 'Soma') {
         // somando os arrays
