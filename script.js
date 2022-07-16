@@ -11,7 +11,7 @@ var base;
 
 // "Escutando o evento" de seleção de base
 var base_listener = base_select.addEventListener("input", () => {
-    base = base_select.value;
+    base = parseInt(base_select.value);
 });
 
 // Escutando o evento de seleção de operação
@@ -30,11 +30,11 @@ var select_listener = operacao_select.addEventListener("input", () => {
     // Imprimindo os Inputs
     operacao_input_div.innerHTML = 
         `
-            <input type="number" placeholder="Valor 1" id="first_value" />
+            <input type="text" placeholder="Valor 1(0-z)" id="first_value" />
             <p>
             ${operacao_type == 'Soma' ? '+' : '-'}
             </p>
-            <input type="number" placeholder="Valor 2" id="second_value" />
+            <input type="text" placeholder="Valor 2(0-z)" id="second_value" />
         `
 })
 
@@ -60,15 +60,6 @@ function calculateResult(array_1, array_2) {
     var array_result = []
     console.clear()
 
-    // transformando os arrays em arrays de números
-    array_1.map((value, index) => {
-        array_1[index] = parseInt(value)
-    })
-
-    array_2.map((value, index) => {
-        array_2[index] = parseInt(value)
-    })
-
     // verificando se os arrays tem o mesmo tamanho
     if (array_1.length > array_2.length) {
         let qtd = array_1.length - array_2.length
@@ -81,6 +72,45 @@ function calculateResult(array_1, array_2) {
             array_1.unshift(0)
         }
     }
+
+    // Converte um caracter pra seu valor correspondente numérico
+    // Ex.: a = 10, b = 11, c = 12, etc.
+    let auxChar;
+    for (let a = 0; a < array_1.length; a++)
+    {
+        if (array_1[a] >= 'a' && array_1[a] <= 'z')
+        {
+            auxChar = array_1[a];
+            array_1[a] = auxChar.charCodeAt(0) - 87;
+        }
+
+        if (array_2[a] >= 'a' && array_2[a] <= 'z')
+        {
+            auxChar = array_2[a];
+            array_2[a] = auxChar.charCodeAt(0) - 87;
+        }
+
+        if (array_1[a] >= 'A' && array_1[a] <= 'Z')
+        {
+            auxChar = array_1[a];
+            array_1[a] = auxChar.charCodeAt(0) - 55;
+        }
+
+        if (array_2[a] >= 'A' && array_2[a] <= 'Z')
+        {
+            auxChar = array_2[a];
+            array_2[a] = auxChar.charCodeAt(0) - 55;
+        }
+    }
+    
+    // transformando os arrays em arrays de números
+    array_1.map((value, index) => {
+        array_1[index] = parseInt(value)
+    })
+
+    array_2.map((value, index) => {
+        array_2[index] = parseInt(value)
+    })
 
     if (operacao_type == 'Soma') {
         // somando os arrays
@@ -113,7 +143,7 @@ function calculateResult(array_1, array_2) {
             }
         }
         // Site para ajudar a verificar: https://www.calculadoraonline.com.br/operacoes-bases
-
+    
     } else if (operacao_type == 'Subtração') {
         // verificar qual array tem o maior valor
         if (array_1.join('') < array_2.join('')) {
@@ -152,6 +182,15 @@ function calculateResult(array_1, array_2) {
             array_result.unshift('-')
         }
 
+    }
+
+    // Converte números em letras para bases >= 10
+    for (let a = 0; a < array_result.length; a++)
+    {
+        if (array_result[a] >= 10 && array_result[a] <= 35)
+        {
+            array_result[a] = String.fromCharCode(array_result[a] + 55);
+        }
     }
         
     var result = array_result.join('')   
