@@ -146,7 +146,7 @@ function calculateResult(array_1, array_2) {
     
     } else if (operacao_type == 'Subtração') {
         // verificar qual array tem o maior valor
-        if (array_1.join('') < array_2.join('')) {
+        if (parseInt(array_1.join('')) < parseInt(array_2.join(''))) {
             var aux = array_1
             array_1 = array_2
             array_2 = aux
@@ -164,6 +164,11 @@ function calculateResult(array_1, array_2) {
             {
                 array_result[i] += base;
                 array_result[i - 1] -= 1;
+            }
+            // Se um número anterior ficar menor que 0
+            if (array_result[i - 1] < 0)
+            {
+                i -= 2;
             }
         }
 
