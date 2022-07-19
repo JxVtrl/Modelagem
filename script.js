@@ -38,8 +38,6 @@ var select_listener = operacao_select.addEventListener("input", () => {
         `
 })
 
-
-
 // Escutando o evento de calcular operação
 var btn_listener = operacao_btn_calculate.addEventListener("click", () => {
     var first_value = document.getElementById('first_value').value
@@ -111,6 +109,26 @@ function calculateResult(array_1, array_2) {
     array_2.map((value, index) => {
         array_2[index] = parseInt(value)
     })
+    
+    // Verifica se há um número inválido com a base escolhida
+    for (let i = 0; i < array_1.length; i++)
+    {
+        if (array_2[i] >= base && array_1[i] >= base)
+        {
+            result_div.innerHTML = "Números inválidos pra base " + base;
+            return;
+        }
+        else if (array_1[i] >= base)
+        {
+            result_div.innerHTML = "O primeiro número é inválido pra base " + base;
+            return;
+        }
+        else if (array_2[i] >= base)
+        {
+            result_div.innerHTML = "O segundo número é inválido pra base " + base;
+            return;
+        }
+    }
 
     if (operacao_type == 'Soma') {
         // somando os arrays
