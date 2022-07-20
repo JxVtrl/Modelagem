@@ -128,6 +128,7 @@ main > div > button:hover {
 }
 
 #basen {
+    width: 100px;
     box-shadow: 1px 1px 8px #888;
     border-radius: 10px;
     background-color: #bbb;
