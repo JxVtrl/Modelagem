@@ -46,12 +46,33 @@ var btn_listener = operacao_btn_calculate.addEventListener("click", () => {
     var array_1 = first_value.split('')
     var array_2 = second_value.split('')
 
-    calculateResult(array_1, array_2)
+    const negative = validateValue(array_1, array_2)
+
+    if (negative) {
+        alert('algum negativo')
+
+    } else {
+        calculateResult(array_1, array_2)
+    }
 })
 
 function consoleFun(array_1, array_2) {
     console.log(array_1)
     console.log(array_2)
+}
+
+function validateValue(array_1, array_2) {
+    if (array_1[0] == '-' || array_2[0] == '-') {
+        if (array_1[0] == '-' && array_2[0] == '-') {
+            return true
+        } else if (array_1[0] == '-') {
+            return 1
+        } else if (array_2[0] == '-') {
+            return 2
+        } 
+    } else {
+        return false
+    }
 }
 
 function calculateResult(array_1, array_2) {
