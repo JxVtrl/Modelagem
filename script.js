@@ -1,4 +1,6 @@
-var operacao_select = document.getElementById('select')
+var sum_select = document.getElementById('sum_select')
+var sub_select = document.getElementById('sub_select')
+
 var operacao_input_father = document.getElementById('input_father')
 var operacao_input_div = document.getElementById('input_div')
 var result_div = document.getElementById('result_div')
@@ -14,29 +16,43 @@ var base_listener = base_select.addEventListener("input", () => {
     base = parseInt(base_select.value);
 });
 
-// Escutando o evento de seleção de operação
-var select_listener = operacao_select.addEventListener("input", () => {
+var select_sum = sum_select.addEventListener('click', () => {
+    selectType(type = 'sum')
+})
+
+var select_sub = sub_select.addEventListener('click', () => {
+    selectType(type = 'sub')
+})
+
+// selecionando o tipo de operação
+function selectType(type) {
     result_div.innerHTML = ''
 
-    var select_value = operacao_select.value
-
     // Tipo de operação
-    if (select_value == 0) operacao_type = 'Soma'
-    else if (select_value == 1) operacao_type = 'Subtração'
+    if (type == 'sum') operacao_type = 'Soma'
+    else if (type == 'sub') operacao_type = 'Subtração'
 
     // Remove a classe hidden da div do input
     operacao_input_father.classList.remove('hidden')
 
     // Imprimindo os Inputs
     operacao_input_div.innerHTML = 
-        `
-            <input type="text" placeholder="Valor 1(0-z)" id="first_value" />
-            <p>
-            ${operacao_type == 'Soma' ? '+' : '-'}
-            </p>
-            <input type="text" placeholder="Valor 2(0-z)" id="second_value" />
-        `
-})
+    `
+        <input 
+            type="text" 
+            placeholder="Valor 1(0-z)" 
+            class="input_value" 
+            id="first_value" 
+        />
+        ${operacao_type == 'Soma' ? '+' : '-'}
+        <input
+            type="text"
+            placeholder="Valor 2(0-z)"
+            class="input_value"
+            id="second_value"
+        />
+    `
+}
 
 // Escutando o evento de calcular operação
 var btn_listener = operacao_btn_calculate.addEventListener("click", () => {
@@ -48,18 +64,15 @@ var btn_listener = operacao_btn_calculate.addEventListener("click", () => {
 
     const negative = validateValue(array_1, array_2)
 
-    if (negative) {
-        alert('algum negativo')
-
-    } else {
-        calculateResult(array_1, array_2)
+    if (!first_value || !second_value || !base_select.value)
+        result_div.innerHTML = 'Preencha todos os campos'
+    else {
+        if (negative) 
+            calculateResult(array_1, array_2, negative)
+        else
+            calculateResult(array_1, array_2)
     }
 })
-
-function consoleFun(array_1, array_2) {
-    console.log(array_1)
-    console.log(array_2)
-}
 
 function validateValue(array_1, array_2) {
     if (array_1[0] == '-' || array_2[0] == '-') {
@@ -75,7 +88,7 @@ function validateValue(array_1, array_2) {
     }
 }
 
-function calculateResult(array_1, array_2) {
+function calculateResult(array_1, array_2, negative = false) {
     var array_result = []
     console.clear()
 

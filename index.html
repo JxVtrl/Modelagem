@@ -11,27 +11,59 @@
 <body>
     <header>
         <div>
-            <a href="#"><h2>Modelagem Computacional - Grupo C</h2></a>
+            <a href="#">
+                <h2>
+                    Modelagem Computacional - Grupo C
+                </h2>
+            </a>
         </div>
         <div>
             <nav>
                 <ul>
-                    <li><a href="https://github.com/andreb308" target="_blank">André Bastos</a></li>
-                    <li><a href="https://github.com/JxVtrl" target="_blank">João Vinícius Vitral</a></li>
-                    <li><a href="https://github.com/TheVicttor" target="_blank">João Victtor</a></li>
-                    <li><a href="https://github.com/ViniciusCMB" target="_blank">Vinicius Monnerat</a></li>
-                    <li><a href="https://github.com/jorgelomeu" target="_blank">Jorge</a></li>
+                    <li>
+                        <a href="https://github.com/andreb308" target="_blank">
+                            André Bastos
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://github.com/JxVtrl" target="_blank">
+                            João Vinícius Vitral
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://github.com/TheVicttor" target="_blank">
+                            João Victtor
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://github.com/ViniciusCMB" target="_blank">
+                            Vinicius Monnerat
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://github.com/jorgelomeu" target="_blank">
+                            Jorge
+                        </a>
+                    </li>
                 </ul>
             </nav>
         </div>
     </header>
     <main>
-        <select name="selecao" id="select">
-            <option selected disabled>Selecione</option>
-            <option value="0">Soma</option>
-            <option value="1">Subtração</option>
-        </select>
-        <input name="basenumerica" id="basen" type="number" min="2" max="36" placeholder="0-36">
+        <div id="select">
+            <button class="button" id="sum_select">+</button>
+            <button class="button" id="sub_select">-</button>
+        </div>
+
+        <input 
+            name="basenumerica" 
+            id="basen" 
+            type="number" 
+            min="2" 
+            max="36" 
+            placeholder="0-36"
+        >
+
         <div id="input_father" class="hidden">
             <div id="input_div"></div> 
             <button id="btn_calculate">Calcular</button>
@@ -39,7 +71,6 @@
 
         <div id="result_div"></div>
     </main>
-    <!-- <footer></footer> -->
 
     <!-- <script></script>     -->
     <script src="script.js"></script>
