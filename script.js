@@ -3,34 +3,22 @@ var sub_select = document.getElementById('sub_select')
 
 var operacao_input_father = document.getElementById('input_father')
 var operacao_input_div = document.getElementById('input_div')
+var calculate_btn = document.getElementById('btn_calculate')
+
 var result_div = document.getElementById('result_div')
-var operacao_btn_calculate = document.getElementById('btn_calculate')
 
 var operacao_type
 
 var base_select = document.getElementById('basen');
 var base;
 
-// "Escutando o evento" de seleção de base
-var base_listener = base_select.addEventListener("input", () => {
-    base = parseInt(base_select.value);
-});
+// Seleção de operação
+var select_sum = sum_select.addEventListener('click', () => selectType(type = 'sum'))
+var select_sub = sub_select.addEventListener('click', () => selectType(type = 'sub'))
 
-var select_sum = sum_select.addEventListener('click', () => {
-    selectType(type = 'sum')
-})
-
-var select_sub = sub_select.addEventListener('click', () => {
-    selectType(type = 'sub')
-})
-
-// selecionando o tipo de operação
+// Selecionando o tipo de operação
 function selectType(type) {
     result_div.innerHTML = ''
-
-    // Tipo de operação
-    if (type == 'sum') operacao_type = 'Soma'
-    else if (type == 'sub') operacao_type = 'Subtração'
 
     // Remove a classe hidden da div do input
     operacao_input_father.classList.remove('hidden')
@@ -44,7 +32,7 @@ function selectType(type) {
             class="input_value" 
             id="first_value" 
         />
-        ${operacao_type == 'Soma' ? '+' : '-'}
+        ${type == 'sum' ? '+' : '-'}
         <input
             type="text"
             placeholder="Valor 2(0-z)"
@@ -54,8 +42,11 @@ function selectType(type) {
     `
 }
 
-// Escutando o evento de calcular operação
-var btn_listener = operacao_btn_calculate.addEventListener("click", () => {
+// Seleção de base
+var base_listener = base_select.addEventListener("input", () => base = parseInt(base_select.value))
+
+// Botão de calcular
+var btn_listener = calculate_btn.addEventListener("click", () => {
     var first_value = document.getElementById('first_value').value
     var second_value = document.getElementById('second_value').value
 
