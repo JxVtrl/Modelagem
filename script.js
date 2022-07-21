@@ -7,8 +7,6 @@ var calculate_btn = document.getElementById('btn_calculate')
 
 var result_div = document.getElementById('result_div')
 
-var operacao_type
-
 var base_select = document.getElementById('basen');
 var base;
 
@@ -155,7 +153,7 @@ function calculateResult(array_1, array_2, negative = false) {
         }
     }
 
-    if (operacao_type == 'Soma') {
+    if (type == 'sum') {
         // somando os arrays
         for (let i = 0; i < array_1.length; i++) {
             array_result[i] = array_1[i] + array_2[i]
@@ -187,7 +185,7 @@ function calculateResult(array_1, array_2, negative = false) {
         }
         // Site para ajudar a verificar: https://www.calculadoraonline.com.br/operacoes-bases
     
-    } else if (operacao_type == 'Subtração') {
+    } else if (type == 'sub') {
         // verificar qual array tem o maior valor
         if (parseInt(array_1.join('')) < parseInt(array_2.join(''))) {
             var aux = array_1
