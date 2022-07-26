@@ -66,7 +66,7 @@ var btn_listener = calculate_btn.addEventListener("click", () => {
 function validateValue(array_1, array_2) {
     if (array_1[0] == '-' || array_2[0] == '-') {
         if (array_1[0] == '-' && array_2[0] == '-') {
-            return true
+            return 3
         } else if (array_1[0] == '-') {
             return 1
         } else if (array_2[0] == '-') {
@@ -80,6 +80,40 @@ function validateValue(array_1, array_2) {
 function calculateResult(array_1, array_2, negative = false) {
     var array_result = []
     console.clear()
+    var typeOperador = type;
+
+    if (array_1[0] == "-")
+    {
+        array_1.shift();
+    }
+    
+    if (array_2[0] == "-")
+    {
+        array_2.shift();
+    }
+
+/*
+Casos do operador +:
+    (x) + (y) = +(x+y)
+    *(-x) + (y) = +=(x-y)* -> operador muda!
+    (-x) + (-y) = -(x+y)
+
+Casos do operador -:
+    (x) - (y) = +-(x-y)
+    *(-x) - (y) = -(x+y)* -> operador muda!
+    (-x) - (-y) = +-(x-y)
+*/
+    if (negative == 1 || negative == 2)
+    {
+        if (type == "sub")
+        {
+            typeOperador = "sum";
+        }
+        else
+        {
+            typeOperador = "sub";
+        }
+    }
 
     // verificando se os arrays tem o mesmo tamanho
     if (array_1.length > array_2.length) {
@@ -153,7 +187,7 @@ function calculateResult(array_1, array_2, negative = false) {
         }
     }
 
-    if (type == 'sum') {
+    if (typeOperador == 'sum') {
         // somando os arrays
         for (let i = 0; i < array_1.length; i++) {
             array_result[i] = array_1[i] + array_2[i]
@@ -182,10 +216,18 @@ function calculateResult(array_1, array_2, negative = false) {
                     i -= 2;
                 }
             }
+        }   
+        // (-x) + (-y) = -(x+y)
+        // (-x) - (y) = -(x+y)
+        if (negative == 3)
+        {
+            array_result.unshift("-");
         }
-        // Site para ajudar a verificar: https://www.calculadoraonline.com.br/operacoes-bases
-    
-    } else if (type == 'sub') {
+        else if (negative == 1)
+        {
+            array_result.unshift("-");
+        }
+    } else if (typeOperador == 'sub') {
         // verificar qual array tem o maior valor
         if (parseInt(array_1.join('')) < parseInt(array_2.join(''))) {
             var aux = array_1
@@ -224,12 +266,33 @@ function calculateResult(array_1, array_2, negative = false) {
             array_result.shift()
         }
 
-        if (aux && aux.length > 0) {
-            array_result.unshift('-')
+        // (x) + (-y) = -(y-x), |y| > |x|
+        // (-x) + (y) = -(x-y), |x| > |y| 
+        if (type == "sum")
+        {
+            if (aux && negative == 2)
+            {
+                array_result.unshift("-");
+            }
+            else if (!aux && negative == 1)
+            {
+                array_result.unshift("-");
+            }
         }
-
+        else
+        {
+            // (-x) - (-y) = -(x-y), |y| < |x|
+            // (x) - (y) = -(x-y), |y| > |x|
+            if (negative == 3 && !aux)
+            {
+                array_result.unshift("-");
+            }
+            else if (aux && aux.length > 0 && negative != 3)
+            {
+                array_result.unshift("-");
+            }
+        }
     }
-
     // Converte números em letras para bases >= 10
     for (let a = 0; a < array_result.length; a++)
     {
