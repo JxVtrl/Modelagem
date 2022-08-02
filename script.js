@@ -81,17 +81,38 @@ function calculateResult(array_1, array_2, negative = false) {
     var array_result = []
     console.clear()
     var typeOperador = type;
+    var racional_1, racional_2;
 
+    // Retira o "-"(menos) de um array
     if (array_1[0] == "-")
     {
         array_1.shift();
     }
-    
     if (array_2[0] == "-")
     {
         array_2.shift();
     }
 
+    // Identifica se um numero é racional
+    for (let i = 0; i < array_1.length; i++)
+    {
+        if (array_1[i] == ":")
+        {
+            racional_1 = i;
+            array_1.splice(i, 1);
+            break;
+        }
+    }
+    for (let i = 0; i < array_2.length; i++)
+    {
+        if (array_2[i] == ":")
+        {
+            racional_2 = i;
+            array_2.splice(i, 1);
+            break;
+        }
+    }
+    
 /*
 Casos do operador +:
     (x) + (y) = +(x+y)
@@ -115,19 +136,6 @@ Casos do operador -:
         }
     }
 
-    // verificando se os arrays tem o mesmo tamanho
-    if (array_1.length > array_2.length) {
-        let qtd = array_1.length - array_2.length
-        for (let i = 0; i < qtd; i++) {
-            array_2.unshift(0)
-        }
-    } else if (array_2.length > array_1.length) {
-        let qtd = array_2.length - array_1.length
-        for (let i = 0; i < qtd; i++) {
-            array_1.unshift(0)
-        }
-    }
-
     // Converte um caracter pra seu valor correspondente numérico
     // Ex.: a = 10, b = 11, c = 12, etc.
     let auxChar;
@@ -139,16 +147,18 @@ Casos do operador -:
             array_1[a] = auxChar.charCodeAt(0) - 87;
         }
 
-        if (array_2[a] >= 'a' && array_2[a] <= 'z')
-        {
-            auxChar = array_2[a];
-            array_2[a] = auxChar.charCodeAt(0) - 87;
-        }
-
         if (array_1[a] >= 'A' && array_1[a] <= 'Z')
         {
             auxChar = array_1[a];
             array_1[a] = auxChar.charCodeAt(0) - 55;
+        }
+    }
+    for (let a = 0; a < array_2.length; a++)
+    {
+        if (array_2[a] >= 'a' && array_2[a] <= 'z')
+        {
+            auxChar = array_2[a];
+            array_2[a] = auxChar.charCodeAt(0) - 87;
         }
 
         if (array_2[a] >= 'A' && array_2[a] <= 'Z')
@@ -187,110 +197,82 @@ Casos do operador -:
         }
     }
 
+    // Separa o numerador e denominador em dois arrays distintos
+    if (racional_1 || racional_2)
+    {
+        var denominador_1 = [], denominador_2 = [];
+
+        if (racional_1)
+        {
+            denominador_1 = array_1.slice(racional_1);
+            array_1.splice(racional_1, array_1.length - 1);
+        }
+        else if (!racional_1)
+        {
+            racional_1 = array_1.length;
+            denominador_1.unshift(1);
+        }
+        
+        if (racional_2)
+        {
+            denominador_2 = array_2.slice(racional_2);
+            array_2.splice(racional_2, array_2.length - 1);
+        }
+        else if (!racional_2)
+        {
+            racional_2 = array_2.length;
+            denominador_2.unshift(1);
+        }
+
+        // Produto dos dois denominadores (M.M.C.)
+        var produtoD = multiDenominador(denominador_1, denominador_2);
+        // "M.M.C. - divide pelo debaixo(denominador) multiplica pelo de cima(numerador)"
+        var multiArray1 = multiArraysE(array_1, divideArray(denominador_1, produtoD), base);
+        var multiArray2 = multiArraysE(array_2, divideArray(denominador_2, produtoD), base);
+    }
+
     if (typeOperador == 'sum') {
-        // somando os arrays
-        for (let i = 0; i < array_1.length; i++) {
-            array_result[i] = array_1[i] + array_2[i]
-        }
-
-        // Se algum valor for maior que a base, soma ao próximo valor
-        for (let i = 0; i < array_result.length; i++)
+        if (racional_1 || racional_2)
         {
-            if (array_result[i] >= base)
+            var numerador = functionSoma(multiArray1, multiArray2, base, negative);
+
+            array_result = [numerador.join(""), ":", produtoD];
+
+            // Se o numerador for zero o "array_result" será zero
+            if (parseInt(numerador[0]) == 0 && (numerador.length == 1))
             {
-                array_result[i] -= base;
-
-                // Evitar índice negativo. Ex.: caso 99 + 99
-                if (i == 0) 
-                {
-                    array_result.unshift(1);
-                }
-                else
-                {
-                    array_result[i - 1] += 1;
-                }
-
-                // Um número anterior pode ficar maior que a base
-                if (array_result[i - 1] >= base)
-                {
-                    i -= 2;
-                }
+                array_result = [0];
             }
-        }   
-        // (-x) + (-y) = -(x+y)
-        // (-x) - (y) = -(x+y)
-        if (negative == 3)
-        {
-            array_result.unshift("-");
+
+            var result = array_result.join("");
+            result_div.innerHTML = result;
+            return;
         }
-        else if (negative == 1)
+        else
         {
-            array_result.unshift("-");
+            array_result = functionSoma(array_1, array_2, base, negative);
         }
     } else if (typeOperador == 'sub') {
-        // verificar qual array tem o maior valor
-        if (parseInt(array_1.join('')) < parseInt(array_2.join(''))) {
-            var aux = array_1
-            array_1 = array_2
-            array_2 = aux
-        }
-
-        // subtraindo valores dos arrays
-        for (let i = 0; i < array_1.length; i++) {
-            array_result[i] = array_1[i] - array_2[i]
-        }
-
-        // Se algum valor for menor que 0, soma a base ao próximo valor
-        for (let i = 0; i < array_result.length; i++) 
+        if (racional_1 || racional_2)
         {
-            if (array_result[i] < 0) 
-            {
-                array_result[i] += base;
-                array_result[i - 1] -= 1;
-            }
-            // Se um número anterior ficar menor que 0
-            if (array_result[i - 1] < 0)
-            {
-                i -= 2;
-            }
-        }
+            var numerador = functionSub(multiArray1, multiArray2, base, negative, type);
 
-        // removendo os 0s desnecessários
-        while(array_result[0] == 0) 
-        {
-            // Não remover o 0 se só houver ele
-            if (array_result.length == 1)
+            if (parseInt(numerador[0]) == 0)
             {
-                break;
+                array_result = [0];
             }
-            array_result.shift()
-        }
+            else
+            {
+                array_result = [numerador.join(""), ":", produtoD];
 
-        // (x) + (-y) = -(y-x), |y| > |x|
-        // (-x) + (y) = -(x-y), |x| > |y| 
-        if (type == "sum")
-        {
-            if (aux && negative == 2)
-            {
-                array_result.unshift("-");
-            }
-            else if (!aux && negative == 1)
-            {
-                array_result.unshift("-");
+                var result = array_result.join("");
+                result_div.innerHTML = result;
+                return;
             }
         }
         else
         {
-            // (-x) - (-y) = -(x-y), |y| < |x|
-            // (x) - (y) = -(x-y), |y| > |x|
-            if (negative == 3 && !aux)
-            {
-                array_result.unshift("-");
-            }
-            else if (aux && aux.length > 0 && negative != 3)
-            {
-                array_result.unshift("-");
-            }
+            array_result = functionSub(array_1, array_2, base, negative, type);
         }
     }
     // Converte números em letras para bases >= 10
@@ -304,4 +286,225 @@ Casos do operador -:
         
     var result = array_result.join('')   
     result_div.innerHTML = result
+}
+
+// Função que soma dois arrays inteiros, ambos de determinada base numérica
+function functionSoma(array_1, array_2, base, negative)
+{
+    var array_result = [];
+
+    // verificando se os arrays tem o mesmo tamanho
+    if (array_1.length > array_2.length) {
+        let qtd = array_1.length - array_2.length
+        for (let i = 0; i < qtd; i++) {
+            array_2.unshift(0)
+        }
+    } else if (array_2.length > array_1.length) {
+        let qtd = array_2.length - array_1.length
+        for (let i = 0; i < qtd; i++) {
+            array_1.unshift(0)
+        }
+    }
+
+    // somando os arrays
+    for (let i = 0; i < array_1.length; i++) {
+        array_result[i] = array_1[i] + array_2[i]
+    }
+
+    // Se algum valor for maior que a base, soma ao próximo valor
+    for (let i = 0; i < array_result.length; i++)
+    {
+        if (array_result[i] >= base)
+        {
+            array_result[i] -= base;
+
+            // Evitar índice negativo. Ex.: caso 99 + 99
+            if (i == 0) 
+            {
+                array_result.unshift(1);
+            }
+            else
+            {
+                array_result[i - 1] += 1;
+            }
+
+            // Um número anterior pode ficar maior que a base
+            if (array_result[i - 1] >= base)
+            {
+                i -= 2;
+            }
+        }
+    }
+    
+    // (-x) + (-y) = -(x+y)
+    // (-x) - (y) = -(x+y)
+    if (negative == 3)
+    {
+        array_result.unshift("-");
+    }
+    else if (negative == 1)
+    {
+        array_result.unshift("-");
+    }
+
+    return array_result;
+}
+
+// Função que subtrai dois arrays inteiros, ambos de determinada base numérica
+function functionSub(array_1, array_2, base, negative, type)
+{
+    var array_result = [];
+
+    // verificando se os arrays tem o mesmo tamanho
+    if (array_1.length > array_2.length) {
+        let qtd = array_1.length - array_2.length
+        for (let i = 0; i < qtd; i++) {
+            array_2.unshift(0)
+        }
+    } else if (array_2.length > array_1.length) {
+        let qtd = array_2.length - array_1.length
+        for (let i = 0; i < qtd; i++) {
+            array_1.unshift(0)
+        }
+    }
+
+    // verificar qual array tem o maior valor
+    if (parseInt(array_1.join('')) < parseInt(array_2.join(''))) {
+        var aux = array_1
+        array_1 = array_2
+        array_2 = aux
+    }
+
+    // subtraindo valores dos arrays
+    for (let i = 0; i < array_1.length; i++) {
+        array_result[i] = array_1[i] - array_2[i]
+    }
+
+    // Se algum valor for menor que 0, soma a base ao próximo valor
+    for (let i = 0; i < array_result.length; i++) 
+    {
+        if (array_result[i] < 0) 
+        {
+            array_result[i] += base;
+            array_result[i - 1] -= 1;
+        }
+        // Se um número anterior ficar menor que 0
+        if (array_result[i - 1] < 0)
+        {
+            i -= 2;
+        }
+    }
+
+    // removendo os 0s desnecessários
+    while(array_result[0] == 0) 
+    {
+        // Não remover o 0 se só houver ele
+        // E também não precisa de "-"(menos) se for só um zero, logo pode dar return
+        if (array_result.length == 1)
+        {
+            return array_result;
+        }
+        array_result.shift()
+    }
+
+    // (x) + (-y) = -(y-x), |y| > |x|
+    // (-x) + (y) = -(x-y), |x| > |y| 
+    if (type == "sum")
+    {
+        if (aux && negative == 2)
+        {
+            array_result.unshift("-");
+        }
+        else if (!aux && negative == 1)
+        {
+            array_result.unshift("-");
+        }
+    }
+    else
+    {
+        // (-x) - (-y) = -(x-y), |y| < |x|
+        // (x) - (y) = -(x-y), |y| > |x|
+        if (negative == 3 && !aux)
+        {
+            array_result.unshift("-");
+        }
+        else if (aux && aux.length > 0 && negative != 3)
+        {
+            array_result.unshift("-");
+        }
+    }
+
+    return array_result;
+}
+
+// Função provisória que multiplica um array com escalar e retorna o resultado em um array
+function multiArraysE(array1, escalar, base)
+{
+    var array_result = [];
+    var aux1 = array1;
+
+    for (let i = 0; i < aux1.length; i++)
+    {
+        array_result[i] = parseInt(aux1[i]) * escalar;
+
+        if (array_result[i] >= base)
+        {
+            array_result[i] = parseInt(array_result[i]) - base;
+
+            // Evitar índice negativo. Ex.: caso 99 + 99
+            if (i == 0) 
+            {
+                array_result.unshift(1);
+            }
+            else
+            {
+                array_result[i - 1] = parseInt(array_result[i - 1]) + 1;
+            }
+            // Um número anterior pode ficar maior que a base
+            if (parseInt(array_result[i - 1]) >= base)
+            {
+                i -= 2;
+            }
+        }
+    }
+
+    return array_result;
+}
+
+// Função provisória que multiplica dois denominadores(arrays) e retorna o resultado
+function multiDenominador(array1, array2)
+{
+    var aux1 = [array1[0]], aux2 = [array2[0]];
+
+    for (let i = 1; i < array1.length; i++)
+    {
+        aux1[0] += "" + array1[i];
+    }
+
+    for (let i = 1; i < array2.length; i++)
+    {
+        aux2[0] += "" + array2[i];
+    }
+
+    if (parseInt(aux1[0]) == parseInt(aux2[0]))
+    {
+        return aux1[0];
+    }
+    else
+    {
+        return parseInt(aux1[0]) * parseInt(aux2[0]);
+    }
+}
+
+// Função provisória que divide um número por um array
+function divideArray(array1, dividendo)
+{
+    var aux1 = [array1[0]];
+
+    for (let i = 1; i < array1.length; i++)
+    {
+        aux1[0] += "" + array1[i];
+    }
+
+    return dividendo / parseInt(aux1[0]);
 }
