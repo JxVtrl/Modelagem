@@ -441,16 +441,18 @@ function functionSub(array_1, array_2, base, negative, type)
 function multiArraysE(array1, escalar, base)
 {
     var array_result = [];
-    var aux1 = array1;
 
-    for (let i = 0; i < aux1.length; i++)
+    for (let i = 0; i < array1.length; i++)
     {
-        array_result[i] = parseInt(aux1[i]) * escalar;
+        array_result[i] = parseInt(array1[i]) * escalar;
+    }
 
+    for (let i = 0; i < array_result.length; i++)
+    {
         if (array_result[i] >= base)
         {
             array_result[i] = parseInt(array_result[i]) - base;
-
+    
             // Evitar índice negativo. Ex.: caso 99 + 99
             if (i == 0) 
             {
@@ -460,10 +462,17 @@ function multiArraysE(array1, escalar, base)
             {
                 array_result[i - 1] = parseInt(array_result[i - 1]) + 1;
             }
+
             // Um número anterior pode ficar maior que a base
-            if (parseInt(array_result[i - 1]) >= base)
+            if (parseInt(array_result[i - 1]) >= base && (i != 0))
             {
                 i -= 2;
+            }
+
+            // Às vezes será necessário subtraí-lo mais vezes
+            if (parseInt(array_result[i]) >= base)
+            {
+                i -= 1;
             }
         }
     }
@@ -488,7 +497,7 @@ function multiDenominador(array1, array2)
 
     if (parseInt(aux1[0]) == parseInt(aux2[0]))
     {
-        return aux1[0];
+        return parseInt(aux1[0]);
     }
     else
     {
