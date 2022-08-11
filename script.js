@@ -5,6 +5,9 @@ var operacao_input_father = document.getElementById('input_father')
 var operacao_input_div = document.getElementById('input_div')
 var calculate_btn = document.getElementById('btn_calculate')
 
+var ajuda_txt = document.getElementById('ajuda_txt')
+var slider_base = document.getElementById('slider_base')
+
 var result_div = document.getElementById('result_div')
 
 var base_select = document.getElementById('basen');
@@ -13,6 +16,7 @@ var base;
 // Seleção de operação
 var select_sum = sum_select.addEventListener('click', () => selectType(type = 'sum'))
 var select_sub = sub_select.addEventListener('click', () => selectType(type = 'sub'))
+var slider = slider_base.addEventListener('click', () => base_select.value = slider_base.value) // Quando escolher a base pela barra, atualiza o valor no campo
 
 // Selecionando o tipo de operação
 function selectType(type) {
@@ -26,22 +30,37 @@ function selectType(type) {
     `
         <input 
             type="text" 
-            placeholder="Valor 1(0-z)" 
+            placeholder="Valor 1 (0-Z)" 
             class="input_value" 
             id="first_value" 
         />
         ${type == 'sum' ? '+' : '-'}
         <input
             type="text"
-            placeholder="Valor 2(0-z)"
+            placeholder="Valor 2 (0-Z)"
             class="input_value"
             id="second_value"
         />
     `
+    ajuda_txt.innerHTML = // Texto de ajuda muda quando a operação é selecionada
+    `
+    <h1>Operação Selecionada</h1>
+    
+    <p>
+    A operação foi selecionada. Selecione a base numérica e digite os valores a serem calculados.
+    <br><br>
+    <b>LEMBRETE:</b> Em bases maiores do que 10, será possível utilizar letras para representar algarismos maiores que 9, de forma que <i>9 + 1 = A</i>, por exemplo. O limite de letras depende do valor da base. Na base máxima suportada, a base 36, aceita-se algarismos de 0 até 9, além das letras de A até Z, que representam algarismos de 10 a 35.
+    </p>
+    
+    
+    <a href="#" class="modal__close">&times;</a>
+    `
+    
 }
 
 // Seleção de base
 var base_listener = base_select.addEventListener("input", () => base = parseInt(base_select.value))
+var base_update_slider = slider_base.addEventListener('click', () => base = base = parseInt(base_select.value)) // Atualiza de fato a base de cálculo quando alterada via slider
 
 // Botão de calcular
 var btn_listener = calculate_btn.addEventListener("click", () => {

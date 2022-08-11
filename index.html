@@ -6,7 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Grupo C - Modelagem Computacional</title>
     <link rel="stylesheet" href="style.css">
-    <!-- <style></style> -->
+        
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+        </style>
+    
 </head>
 <body>
     <header>
@@ -22,7 +26,7 @@
                 <ul>
                     <li>
                         <a href="https://github.com/andreb308" target="_blank">
-                            André Bastos
+                            André Barros
                         </a>
                     </li>
                     <li>
@@ -61,8 +65,11 @@
             type="number" 
             min="2" 
             max="36" 
-            placeholder="0-36"
+            placeholder="Base (2-36)"
         >
+        <div  class="slidecontainer">
+            <input id="slider_base" type="range" min="2" max="36" value="10" class="slider" > 
+          </div> 
 
         <div id="input_father" class="hidden">
             <div id="input_div"></div> 
@@ -71,6 +78,30 @@
 
         <div id="result_div"></div>
     </main>
+
+    <div id="ajuda" class="modal">
+        <div id="ajuda_txt"class="modal__content">
+            <h1>Como Funciona?</h1>
+    
+            <p>
+                Esse programa foi feito para explicar os processos de adição e subtração de forma visual.
+                <br><br>
+                Primeiramente será necessário escolher a operação desejada. Você pode escolher entre Soma e Subtração. Assim que a operação for escolhida, será preciso escolher a base numérica para o cálculo. 
+                <br><br>
+                <b>Note que os processos de soma e subtração comuns são feitos em base 10, mas o programa suporta bases de 2 (binária) até 36, aceitando, portanto, algarismos de 0 até Z, contanto que dentro dos limites da base escolhida</b>. 
+                <br><br>
+                Com a operação selecionada, novos campos abrirão, com espaços para os valores que você deseja somar ou subtrair na base escolhida.
+                <br><br>
+                Quando a base e os valores forem escolhidos, basta clicar no botão "<b>Calcular</b>" que a resposta será exibida logo em seguida.
+                
+            </p>
+    
+            <a href="#" class="modal__close">&times;</a>
+        </div>
+    </div>
+    
+    <a class="help_btn" href="#ajuda"><img id="ajuda_icon" class="ajuda" src="img/help.png"></a>
+    
 
     <!-- <script></script>     -->
     <script src="script.js"></script>
