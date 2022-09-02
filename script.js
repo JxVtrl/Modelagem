@@ -11,7 +11,7 @@ var slider_base = document.getElementById('slider_base')
 var result_div = document.getElementById('result_div')
 
 var base_select = document.getElementById('basen');
-var base;
+var base = base_select.value;
 
 // Seleção de operação
 var select_sum = sum_select.addEventListener('click', () => selectType(type = 'sum'))
@@ -231,7 +231,7 @@ Casos do operador -:
             racional_1 = array_1.length;
             denominador_1.unshift(1);
         }
-        
+
         if (racional_2)
         {
             denominador_2 = array_2.slice(racional_2);
@@ -241,6 +241,51 @@ Casos do operador -:
         {
             racional_2 = array_2.length;
             denominador_2.unshift(1);
+        }
+
+        // Se o denominador_1 estiver vazio
+        if (denominador_1 == "")
+        {
+            result_div.innerHTML = "Número 1 é inválido!";
+            return;
+        }
+        // Se o denominador_2 estiver vazio
+        if (denominador_2 == "")
+        {
+            result_div.innerHTML = "Número 2 é inválido!";
+            return;
+        }
+
+        // Remove os zeros do inicio do denominador_1 e do denominador_2
+        while (denominador_1[0] == 0 || denominador_2[0] == 0)
+        {
+            if (denominador_1[0] == 0)
+            {
+                denominador_1.shift();
+            }
+            if (denominador_2[0] == 0)
+            {
+                denominador_2.shift();
+            }
+        }
+
+        // Se o denominador_1 e denominador_2 forem compostos somente de zeros
+        if (denominador_1 == "" && denominador_2 == "")
+        {
+            result_div.innerHTML = "Os número 1 e 2 são inválidos (divisão por zero)!";
+            return;
+        }
+        // Se o denominador_1 só for composto de zero(s)
+        if (denominador_1 == "")
+        {
+            result_div.innerHTML = "O número 1 é inválido (divisão por zero)!";
+            return;
+        }
+        // Se o denominador_2 só for composto de zero(s)
+        if (denominador_2 == "")
+        {
+            result_div.innerHTML = "O número 2 é inválido (divisão por zero)!";
+            return;
         }
 
         // Produto dos dois denominadores (M.M.C.)
@@ -254,18 +299,7 @@ Casos do operador -:
         if (racional_1 || racional_2)
         {
             var numerador = functionSoma(multiArray1, multiArray2, base, negative);
-
-            array_result = [numerador.join(""), ":", produtoD];
-
-            // Se o numerador for zero o "array_result" será zero
-            if (parseInt(numerador[0]) == 0 && (numerador.length == 1))
-            {
-                array_result = [0];
-            }
-
-            var result = array_result.join("");
-            result_div.innerHTML = result;
-            return;
+            array_result = normalizaRacional(numerador, produtoD);
         }
         else
         {
@@ -275,19 +309,7 @@ Casos do operador -:
         if (racional_1 || racional_2)
         {
             var numerador = functionSub(multiArray1, multiArray2, base, negative, type);
-
-            if (parseInt(numerador[0]) == 0)
-            {
-                array_result = [0];
-            }
-            else
-            {
-                array_result = [numerador.join(""), ":", produtoD];
-
-                var result = array_result.join("");
-                result_div.innerHTML = result;
-                return;
-            }
+            array_result = normalizaRacional(numerador, produtoD);
         }
         else
         {
@@ -514,14 +536,8 @@ function multiDenominador(array1, array2)
         aux2[0] += "" + array2[i];
     }
 
-    if (parseInt(aux1[0]) == parseInt(aux2[0]))
-    {
-        return parseInt(aux1[0]);
-    }
-    else
-    {
-        return parseInt(aux1[0]) * parseInt(aux2[0]);
-    }
+
+    return parseInt(aux1[0]) * parseInt(aux2[0]);
 }
 
 // Função provisória que divide um número por um array
@@ -535,4 +551,79 @@ function divideArray(array1, dividendo)
     }
 
     return dividendo / parseInt(aux1[0]);
+}
+
+// Função provisória que normaliza um número racional
+function normalizaRacional(numerador, denominador)
+{   
+    var aux1 = numerador, negativo = 0;
+    var menor, aux2;
+
+    if (aux1[0] == "-")
+    {
+        negativo = 1;
+        aux1[0] = "";
+    }
+
+    for (let i = 1; i < numerador.length; i++)
+    {
+        aux1[0] += "" + numerador[i];
+    }
+
+    // Se o numerador for zero o resultado normalizado será zero
+    if (parseInt(aux1[0]) == 0 && (numerador.length == 1))
+    {
+        return 0;
+    }
+
+    if (parseInt(aux1[0]) < denominador)
+    {
+        menor = parseInt(aux1[0]);
+    }
+    else
+    {
+        menor = denominador;
+    }
+
+    for (let i = 2; i <= menor; i++)
+    {
+        if ((parseInt(aux1[0]) % i == 0) && (denominador % i == 0))
+        {
+            aux1[0] = (parseInt(aux1[0]) / i);
+            denominador /= i;
+            menor /= i;
+            
+            // Se a fração ainda for divisível pelo mesmo número
+            if ((parseInt(aux1[0]) % i == 0) && (denominador % i == 0))
+            {
+                i--;
+            }
+        }
+    }
+
+    // Se o denominador for igual a 1, não há necessidade de mostrá-lo
+    if (denominador == 1)
+    {
+        if (negativo == 1)
+        {
+            aux2 = parseInt(-aux1[0]);
+        }
+        else
+        {
+            aux2 = parseInt(aux1[0]);
+        }
+    }
+    else
+    {
+        if (negativo == 1)
+        {
+            aux2 = parseInt(-aux1[0]) + ":" + denominador;
+        }
+        else
+        {
+            aux2 = parseInt(aux1[0]) + ":" + denominador;
+        }
+    }
+
+    return aux2.split("");
 }
