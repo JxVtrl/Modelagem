@@ -102,6 +102,56 @@ function calculateResult(array_1, array_2, negative = false) {
     var typeOperador = type;
     var racional_1, racional_2;
 
+    // Verifica se há um símbolo inválido no array_1
+    for (let i = 0; i < array_1.length; i++)
+    {
+        if (array_1[i] < "0")
+        {
+            result_div.innerHTML = "O primeiro número possui um símbolo inválido!";
+            return;
+        }
+        else if (array_1[i] > ":" && array_1[i] < "A")
+        {
+            result_div.innerHTML = "O primeiro número possui um símbolo inválido!";
+            return;
+        }
+        else if (array_1[i] > "Z" && array_1[i] < "a")
+        {
+            result_div.innerHTML = "O primeiro número possui um símbolo inválido!";
+            return;
+        }
+        else if (array_1[i] > "z")
+        {
+            result_div.innerHTML = "O primeiro número possui um símbolo inválido!";
+            return;
+        }
+    }
+
+    // Verifica se há um símbolo inválido no array_2
+    for (let i = 0; i < array_2.length; i++)
+    {
+        if (array_2[i] < "0")
+        {
+            result_div.innerHTML = "O segundo número possui um símbolo inválido!";
+            return;
+        }
+        else if (array_2[i] > ":" && array_2[i] < "A")
+        {
+            result_div.innerHTML = "O segundo número possui um símbolo inválido!";
+            return;
+        }
+        else if (array_2[i] > "Z" && array_2[i] < "a")
+        {
+            result_div.innerHTML = "O segundo número possui um símbolo inválido!";
+            return;
+        }
+        else if (array_2[i] > "z")
+        {
+            result_div.innerHTML = "O segundo número possui um símbolo inválido!";
+            return;
+        }
+    }
+
     // Retira o "-"(menos) de um array
     if (array_1[0] == "-")
     {
@@ -243,14 +293,20 @@ Casos do operador -:
             denominador_2.unshift(1);
         }
 
+        // Se ambos os denominadores estiverem vazios
+        if (denominador_1 == "" && denominador_2 == "")
+        {
+            result_div.innerHTML = "Números inválidos!";
+            return;
+        }
         // Se o denominador_1 estiver vazio
-        if (denominador_1 == "")
+        else if (denominador_1 == "")
         {
             result_div.innerHTML = "Número 1 é inválido!";
             return;
         }
         // Se o denominador_2 estiver vazio
-        if (denominador_2 == "")
+        else if (denominador_2 == "")
         {
             result_div.innerHTML = "Número 2 é inválido!";
             return;
@@ -316,6 +372,13 @@ Casos do operador -:
             array_result = functionSub(array_1, array_2, base, negative, type);
         }
     }
+
+    // Se o numerador for zero, o resultado final será zero
+    if (numerador == 0)
+    {
+        result_div.innerHTML = 0;
+    }
+
     // Converte números em letras para bases >= 10
     for (let a = 0; a < array_result.length; a++)
     {
@@ -324,8 +387,20 @@ Casos do operador -:
             array_result[a] = String.fromCharCode(array_result[a] + 55);
         }
     }
-        
-    var result = array_result.join('')   
+
+    // Retira os zeros do começo do array
+    while(array_result[0] == 0) 
+    {
+        // Não remover o 0 se só houver ele
+        if (array_result.length == 1)
+        {
+            break;
+        }
+
+        array_result.shift();
+    }
+
+    var result = array_result.join('')
     result_div.innerHTML = result
 }
 
@@ -601,29 +676,24 @@ function normalizaRacional(numerador, denominador)
         }
     }
 
-    // Se o denominador for igual a 1, não há necessidade de mostrá-lo
-    if (denominador == 1)
+    // Transforma um número em um array de números
+    var numberaux = aux1[0];
+    aux2 = String(numberaux).split("").map((numberaux)=>{
+        return Number(numberaux);
+    })
+
+    // É adicionado um menos no começo do array caso o número for negativo
+    if (negativo == 1)
     {
-        if (negativo == 1)
-        {
-            aux2 = parseInt(-aux1[0]);
-        }
-        else
-        {
-            aux2 = parseInt(aux1[0]);
-        }
-    }
-    else
-    {
-        if (negativo == 1)
-        {
-            aux2 = parseInt(-aux1[0]) + ":" + denominador;
-        }
-        else
-        {
-            aux2 = parseInt(aux1[0]) + ":" + denominador;
-        }
+        aux2.unshift("-");
     }
 
-    return aux2.split("");
+    // Se o denominador for igual a 1, não há necessidade de mostrá-lo
+    if (denominador != 1)
+    {
+        aux2.push(":");
+        aux2.push(denominador);
+    }
+
+    return aux2;
 }
