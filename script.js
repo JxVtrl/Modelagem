@@ -101,11 +101,12 @@ function calculateResult(array_1, array_2, negative = false) {
     console.clear()
     var typeOperador = type;
     var racional_1, racional_2;
+    base = parseInt(base);
 
     // Verifica se há um símbolo inválido no array_1
     for (let i = 0; i < array_1.length; i++)
     {
-        if (array_1[i] < "0")
+        if (array_1[i] < "0" && array_1[i] != "-")
         {
             result_div.innerHTML = "O primeiro número possui um símbolo inválido!";
             return;
@@ -130,7 +131,7 @@ function calculateResult(array_1, array_2, negative = false) {
     // Verifica se há um símbolo inválido no array_2
     for (let i = 0; i < array_2.length; i++)
     {
-        if (array_2[i] < "0")
+        if (array_2[i] < "0" && array_2[i] != "-")
         {
             result_div.innerHTML = "O segundo número possui um símbolo inválido!";
             return;
@@ -207,35 +208,8 @@ Casos do operador -:
 
     // Converte um caracter pra seu valor correspondente numérico
     // Ex.: a = 10, b = 11, c = 12, etc.
-    let auxChar;
-    for (let a = 0; a < array_1.length; a++)
-    {
-        if (array_1[a] >= 'a' && array_1[a] <= 'z')
-        {
-            auxChar = array_1[a];
-            array_1[a] = auxChar.charCodeAt(0) - 87;
-        }
-
-        if (array_1[a] >= 'A' && array_1[a] <= 'Z')
-        {
-            auxChar = array_1[a];
-            array_1[a] = auxChar.charCodeAt(0) - 55;
-        }
-    }
-    for (let a = 0; a < array_2.length; a++)
-    {
-        if (array_2[a] >= 'a' && array_2[a] <= 'z')
-        {
-            auxChar = array_2[a];
-            array_2[a] = auxChar.charCodeAt(0) - 87;
-        }
-
-        if (array_2[a] >= 'A' && array_2[a] <= 'Z')
-        {
-            auxChar = array_2[a];
-            array_2[a] = auxChar.charCodeAt(0) - 55;
-        }
-    }
+    letraparaNum(array_1);
+    letraparaNum(array_2);
     
     // transformando os arrays em arrays de números
     array_1.map((value, index) => {
@@ -345,17 +319,17 @@ Casos do operador -:
         }
 
         // Produto dos dois denominadores (M.M.C.)
-        var produtoD = multiDenominador(denominador_1, denominador_2);
+        var produtoD = functionMulti(denominador_1, denominador_2, base, negative);
         // "M.M.C. - divide pelo debaixo(denominador) multiplica pelo de cima(numerador)"
-        var multiArray1 = multiArraysE(array_1, divideArray(denominador_1, produtoD), base);
-        var multiArray2 = multiArraysE(array_2, divideArray(denominador_2, produtoD), base);
+        var multiArray1 = functionMulti(array_1, functionDiv(denominador_1, produtoD, base, negative), base, negative);
+        var multiArray2 = functionMulti(array_2, functionDiv(denominador_2, produtoD, base, negative), base, negative);
     }
 
     if (typeOperador == 'sum') {
         if (racional_1 || racional_2)
         {
             var numerador = functionSoma(multiArray1, multiArray2, base, negative);
-            array_result = normalizaRacional(numerador, produtoD);
+            array_result = normRacional(numerador, produtoD, base);
         }
         else
         {
@@ -365,7 +339,7 @@ Casos do operador -:
         if (racional_1 || racional_2)
         {
             var numerador = functionSub(multiArray1, multiArray2, base, negative, type);
-            array_result = normalizaRacional(numerador, produtoD);
+            array_result = normRacional(numerador, produtoD, base);
         }
         else
         {
@@ -374,19 +348,14 @@ Casos do operador -:
     }
 
     // Se o numerador for zero, o resultado final será zero
-    if (numerador == 0)
+    if (numerador == 0 && numerador.length == 1)
     {
         result_div.innerHTML = 0;
+        return;
     }
 
-    // Converte números em letras para bases >= 10
-    for (let a = 0; a < array_result.length; a++)
-    {
-        if (array_result[a] >= 10 && array_result[a] <= 35)
-        {
-            array_result[a] = String.fromCharCode(array_result[a] + 55);
-        }
-    }
+    // Converte números >= 10 para sua representação alfabética
+    numparaLetra(array_result);
 
     // Retira os zeros do começo do array
     while(array_result[0] == 0) 
@@ -402,6 +371,8 @@ Casos do operador -:
 
     var result = array_result.join('')
     result_div.innerHTML = result
+
+    return;
 }
 
 // Função que soma dois arrays inteiros, ambos de determinada base numérica
@@ -553,147 +524,180 @@ function functionSub(array_1, array_2, base, negative, type)
     return array_result;
 }
 
-// Função provisória que multiplica um array com escalar e retorna o resultado em um array
-function multiArraysE(array1, escalar, base)
+// Função que multiplica dois arrays, ambos de determinada base numérica (*Função Provisória*)
+function functionMulti(array_1, array_2, base, negative)
 {
-    var array_result = [];
+    var array_result = [], aux1 = "";
 
-    for (let i = 0; i < array1.length; i++)
+    // Converte números >= 10 para sua representação alfabética
+    numparaLetra(array_2);
+
+    for (let i = 0; i < array_2.length; i++)
     {
-        array_result[i] = parseInt(array1[i]) * escalar;
+        aux1 += array_2[i];
     }
 
-    for (let i = 0; i < array_result.length; i++)
-    {
-        if (array_result[i] >= base)
+    for (let i = 0; i < parseInt(aux1, base); i++)
+    {   
+        array_result = functionSoma(array_1, array_result, base, negative);
+        if (array_result[0] == "-")
         {
-            array_result[i] = parseInt(array_result[i]) - base;
-    
-            // Evitar índice negativo. Ex.: caso 99 + 99
-            if (i == 0) 
-            {
-                array_result.unshift(1);
-            }
-            else
-            {
-                array_result[i - 1] = parseInt(array_result[i - 1]) + 1;
-            }
-
-            // Um número anterior pode ficar maior que a base
-            if (parseInt(array_result[i - 1]) >= base && (i != 0))
-            {
-                i -= 2;
-            }
-
-            // Às vezes será necessário subtraí-lo mais vezes
-            if (parseInt(array_result[i]) >= base)
-            {
-                i -= 1;
-            }
+            array_result.shift();
         }
     }
+
+    // Converte uma letra pra seu valor correspondente numérico
+    letraparaNum(array_2);
 
     return array_result;
 }
 
-// Função provisória que multiplica dois denominadores(arrays) e retorna o resultado
-function multiDenominador(array1, array2)
+// Função que divide dois arrays, ambos de determinada base numérica (*Função Provisória*)
+function functionDiv(divisor, dividendo, base)
 {
-    var aux1 = [array1[0]], aux2 = [array2[0]];
+    var array_result = [];
 
-    for (let i = 1; i < array1.length; i++)
+    // Converte números em letras para bases >= 10
+    numparaLetra(divisor);
+    numparaLetra(dividendo);
+
+    var aux1 = "", aux2 = "";
+
+    for (let i = 0; i < divisor.length; i++)
     {
-        aux1[0] += "" + array1[i];
+        aux1 += divisor[i];
     }
 
-    for (let i = 1; i < array2.length; i++)
+    for (let i = 0; i < dividendo.length; i++)
     {
-        aux2[0] += "" + array2[i];
+        aux2 += dividendo[i];
     }
 
+    var numero = parseInt(aux2, base) / parseInt(aux1, base);
+    numero = numero.toString(base);
+    numero = numero.split("");
 
-    return parseInt(aux1[0]) * parseInt(aux2[0]);
+    letraparaNum(numero);
+
+    return array_result = numero;
 }
 
-// Função provisória que divide um número por um array
-function divideArray(array1, dividendo)
+// Função que normaliza um número racional (*Função Provisória*)
+function normRacional(numerador, denominador, base)
 {
-    var aux1 = [array1[0]];
+    var aux1 = "", aux2 = "", menor = [];
+    var array_result = [];
+    var negativo = 0;
 
-    for (let i = 1; i < array1.length; i++)
+    if (numerador[0] == "-")
     {
-        aux1[0] += "" + array1[i];
-    }
-
-    return dividendo / parseInt(aux1[0]);
-}
-
-// Função provisória que normaliza um número racional
-function normalizaRacional(numerador, denominador)
-{   
-    var aux1 = numerador, negativo = 0;
-    var menor, aux2;
-
-    if (aux1[0] == "-")
-    {
+        numerador.shift();
         negativo = 1;
-        aux1[0] = "";
     }
 
-    for (let i = 1; i < numerador.length; i++)
+    // Converte números >= 10 para sua representação alfabética
+    numparaLetra(numerador);
+    numparaLetra(denominador);
+
+    // Clona os arrays em outras variáveis
+    for (let i = 0; i < numerador.length; i++)
     {
-        aux1[0] += "" + numerador[i];
+        aux1 += numerador[i];
+    }
+    for (let i = 0; i < denominador.length; i++)
+    {
+        aux2 += denominador[i];
     }
 
-    // Se o numerador for zero o resultado normalizado será zero
-    if (parseInt(aux1[0]) == 0 && (numerador.length == 1))
+    // Verifica qual número tem menor valor
+    if (parseInt(aux1, base) > parseInt(aux2, base))
     {
-        return 0;
+        menor = parseInt(aux2, base);
     }
-
-    if (parseInt(aux1[0]) < denominador)
+    else if (parseInt(aux1, base) < parseInt(aux2, base))
     {
-        menor = parseInt(aux1[0]);
+        menor = parseInt(aux1, base);
     }
     else
     {
-        menor = denominador;
+        menor = parseInt(aux1, base);
     }
 
     for (let i = 2; i <= menor; i++)
     {
-        if ((parseInt(aux1[0]) % i == 0) && (denominador % i == 0))
+        if ((parseInt(aux1, base) % i == 0) && (parseInt(aux2, base) % i == 0))
         {
-            aux1[0] = (parseInt(aux1[0]) / i);
-            denominador /= i;
+            aux1 = (parseInt(aux1, base) / i);
+            aux2 = (parseInt(aux2, base) / i);
             menor /= i;
             
             // Se a fração ainda for divisível pelo mesmo número
-            if ((parseInt(aux1[0]) % i == 0) && (denominador % i == 0))
+            if ((parseInt(aux1, base) % i == 0) && (parseInt(aux2, base) % i == 0))
             {
                 i--;
             }
         }
     }
 
-    // Transforma um número em um array de números
-    var numberaux = aux1[0];
-    aux2 = String(numberaux).split("").map((numberaux)=>{
-        return Number(numberaux);
-    })
+    aux1 = aux1.toString(base);
+    aux2 = aux2.toString(base);
 
-    // É adicionado um menos no começo do array caso o número for negativo
+    for (let i = 0; i < aux1.length; i++)
+    {
+        array_result.push(aux1[i]);
+    }
+
+    array_result.push(":");
+
+    for (let i = 0; i < aux2.length; i++)
+    {
+        array_result.push(aux2[i]);
+    }
+
+    letraparaNum(array_result);
+
+    // É adicionado o sinal de menos "-" caso o numerador for negativo
     if (negativo == 1)
     {
-        aux2.unshift("-");
+        array_result.unshift("-");
     }
 
-    // Se o denominador for igual a 1, não há necessidade de mostrá-lo
-    if (denominador != 1)
+    return array_result;
+}
+
+// Converte números >= 10 para sua representação alfabética
+function numparaLetra(array)
+{
+    for (let a = 0; a < array.length; a++)
     {
-        aux2.push(":");
-        aux2.push(denominador);
+        if (array[a] >= 10 && array[a] <= 35)
+        {
+            array[a] = String.fromCharCode(array[a] + 55);
+        }
     }
 
-    return aux2;
+    return;
+}
+
+// Converte uma letra pra seu valor correspondente numérico
+function letraparaNum(array)
+{
+    // Ex.: a = 10, b = 11, c = 12, etc.
+    let auxChar;
+    for (let a = 0; a < array.length; a++)
+    {
+        if (array[a] >= 'a' && array[a] <= 'z')
+        {
+            auxChar = array[a];
+            array[a] = auxChar.charCodeAt(0) - 87;
+        }
+
+        if (array[a] >= 'A' && array[a] <= 'Z')
+        {
+            auxChar = array[a];
+            array[a] = auxChar.charCodeAt(0) - 55;
+        }
+    }
+
+    return;
 }
