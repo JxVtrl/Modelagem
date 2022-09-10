@@ -13,6 +13,8 @@ var result_div = document.getElementById('result_div')
 var base_select = document.getElementById('basen');
 var base = base_select.value;
 
+var memoria_calculo = document.getElementById('memoria_calculo');
+
 // Seleção de operação
 var select_sum = sum_select.addEventListener('click', () => selectType(type = 'sum'))
 var select_sub = sub_select.addEventListener('click', () => selectType(type = 'sub'))
@@ -98,6 +100,7 @@ function validateValue(array_1, array_2) {
 
 function calculateResult(array_1, array_2, negative = false) {
     var array_result = []
+    var vetor_memoria = [];
     console.clear()
     var typeOperador = type;
     var racional_1, racional_2;
@@ -319,30 +322,79 @@ Casos do operador -:
         }
 
         // Produto dos dois denominadores (M.M.C.)
-        var produtoD = functionMulti(denominador_1, denominador_2, base, negative);
-        // "M.M.C. - divide pelo debaixo(denominador) multiplica pelo de cima(numerador)"
-        var multiArray1 = functionMulti(array_1, functionDiv(denominador_1, produtoD, base, negative), base, negative);
-        var multiArray2 = functionMulti(array_2, functionDiv(denominador_2, produtoD, base, negative), base, negative);
+        var produtoD = [];
+        var multiArray1 = [], multiArray2 = [];
+
+        // Caso array_1 ou array_2 forem zeros não precisar fazer o M.M.C.
+        if (parseInt(array_2.join(''), base) == 0)
+        {
+            produtoD = denominador_1;
+            multiArray1 = array_1;
+            multiArray2.push(0);
+
+        }
+        else if (parseInt(array_1.join(''), base) == 0)
+        {
+            produtoD = denominador_2;
+            multiArray1.push(0);
+            multiArray2 = array_2;
+        }
+        else
+        {
+            produtoD = functionMulti(denominador_1, denominador_2, base, negative);
+
+            // "M.M.C. - divide pelo debaixo(denominador) multiplica pelo de cima(numerador)"
+            multiArray1 = functionMulti(array_1, functionDiv(produtoD, denominador_1, base), base, negative);
+            multiArray2 = functionMulti(array_2, functionDiv(produtoD, denominador_2, base), base, negative);
+        }
+
+        if (typeOperador == "sum")
+        {
+            memoria_calculo.innerHTML = "Números a somar: " + array_1.join('') + ":" + denominador_1.join('') + " + " + array_2.join('') + ":" + denominador_2.join('');
+        }
+        else
+        {
+            memoria_calculo.innerHTML = "Números a subtrair: " + array_1.join('') + ":" + denominador_1.join('') + " - " + array_2.join('') + ":" + denominador_2.join('');
+        }
+        
+        memoria_calculo.innerHTML += "<br></br>Separa o numerador e denominador em dois arrays distintos: <br></br>";
+        memoria_calculo.innerHTML += "Numerador1: " + array_1.join('') + " e Denominador1: " + denominador_1.join('');
+        memoria_calculo.innerHTML += "<br></br>Numerador2: " + array_2.join('') + " e Denominador2: " + denominador_2.join('');
+        memoria_calculo.innerHTML += "<br></br>Calcula o produto dos dois denominadores = " + produtoD.join('');
+        memoria_calculo.innerHTML += "<br></br>M.M.C. 1- divide pelo debaixo(denominador) multiplica pelo de cima(numerador): ";
+        memoria_calculo.innerHTML += "(" + produtoD.join('') + "/" + denominador_1.join('') + ")*(" + array_1 + ") = " + multiArray1.join('');
+        memoria_calculo.innerHTML += "<br></br>M.M.C. 2- divide pelo debaixo(denominador) multiplica pelo de cima(numerador): ";
+        memoria_calculo.innerHTML += "(" + produtoD.join('') + "/" + denominador_2.join('') + ")*(" + array_2 + ") = " + multiArray2.join('');
     }
 
     if (typeOperador == 'sum') {
         if (racional_1 || racional_2)
         {
+            memoria_calculo.innerHTML += "<br></br>Somando esses dois números teremos o numerador final: ";
             var numerador = functionSoma(multiArray1, multiArray2, base, negative);
+            memoria_calculo.innerHTML += "<br></br>O racional é então = " + numerador.join('') + ":" + produtoD.join('');
             array_result = normRacional(numerador, produtoD, base);
+            memoria_calculo.innerHTML += "<br></br>Realizando a normalização deste número racional teremos como resultado final = " + array_result.join('');
         }
         else
         {
+            memoria_calculo.innerHTML = "Números a somar: " + array_1.join('') + " + " + array_2.join('');
+
             array_result = functionSoma(array_1, array_2, base, negative);
         }
     } else if (typeOperador == 'sub') {
         if (racional_1 || racional_2)
         {
+            memoria_calculo.innerHTML += "<br></br>Subtraindo esses dois números teremos o numerador final: ";
             var numerador = functionSub(multiArray1, multiArray2, base, negative, type);
+            memoria_calculo.innerHTML += "<br></br>O racional é então = " + numerador.join('') + ":" + produtoD.join('');
             array_result = normRacional(numerador, produtoD, base);
+            memoria_calculo.innerHTML += "<br></br>Realizando a normalização deste número racional teremos como resultado final = " + array_result.join('');
         }
         else
         {
+            memoria_calculo.innerHTML = "Números a subtrair: " + array_1.join('') + " - " + array_2.join('');
+
             array_result = functionSub(array_1, array_2, base, negative, type);
         }
     }
@@ -393,10 +445,13 @@ function functionSoma(array_1, array_2, base, negative)
         }
     }
 
-    // somando os arrays
+    memoria_calculo.innerHTML += "<br></br>Deixando os números com o mesmo tamanho: " + array_1 + " | " + array_2;
+
     for (let i = 0; i < array_1.length; i++) {
         array_result[i] = array_1[i] + array_2[i]
     }
+
+    memoria_calculo.innerHTML += "<br></br>Somando os números: " + array_1 + " + " + array_2 + " = " + array_result;
 
     // Se algum valor for maior que a base, soma ao próximo valor
     for (let i = 0; i < array_result.length; i++)
@@ -422,7 +477,10 @@ function functionSoma(array_1, array_2, base, negative)
             }
         }
     }
-    
+
+    memoria_calculo.innerHTML += "<br></br>Se algum valor for maior que a base " + base + ", subtrai a base deste valor e acrescenta 1 ao número de índice anterior = ";
+    memoria_calculo.innerHTML += array_result;
+
     // (-x) + (-y) = -(x+y)
     // (-x) - (y) = -(x+y)
     if (negative == 3)
@@ -433,6 +491,13 @@ function functionSoma(array_1, array_2, base, negative)
     {
         array_result.unshift("-");
     }
+
+    if (negative == 3 || negative == 1)
+    {
+        memoria_calculo.innerHTML += "<br></br>Se o valor for negativo é acrescentado um menos no começo = " + array_result;
+    }
+
+    memoria_calculo.innerHTML += "<br></br>O valor final da soma é = " + array_result.join('');
 
     return array_result;
 }
@@ -455,6 +520,8 @@ function functionSub(array_1, array_2, base, negative, type)
         }
     }
 
+    memoria_calculo.innerHTML += "<br></br>Deixando os números com o mesmo tamanho: " + array_1 + " | " + array_2;
+
     // verificar qual array tem o maior valor
     if (parseInt(array_1.join('')) < parseInt(array_2.join(''))) {
         var aux = array_1
@@ -462,10 +529,14 @@ function functionSub(array_1, array_2, base, negative, type)
         array_2 = aux
     }
 
+    memoria_calculo.innerHTML += "<br></br>Verifica qual array tem maior valor numérico = " + array_1;
+
     // subtraindo valores dos arrays
     for (let i = 0; i < array_1.length; i++) {
         array_result[i] = array_1[i] - array_2[i]
     }
+
+    memoria_calculo.innerHTML += "<br></br>Subtraindo os números: " + array_1 + " - " + array_2 + " = " + array_result;
 
     // Se algum valor for menor que 0, soma a base ao próximo valor
     for (let i = 0; i < array_result.length; i++) 
@@ -482,6 +553,8 @@ function functionSub(array_1, array_2, base, negative, type)
         }
     }
 
+    memoria_calculo.innerHTML += "<br></br>Se algum valor for menor que 0, soma este valor com a base, e subtrai 1 do valor de índice anterior";
+
     // removendo os 0s desnecessários
     while(array_result[0] == 0) 
     {
@@ -489,10 +562,13 @@ function functionSub(array_1, array_2, base, negative, type)
         // E também não precisa de "-"(menos) se for só um zero, logo pode dar return
         if (array_result.length == 1)
         {
+            memoria_calculo.innerHTML += "O valor final da subração é zero(" + array_result + ")";
             return array_result;
         }
         array_result.shift()
     }
+
+    memoria_calculo.innerHTML += "<br></br>Remove os 0s desnecessários = " + array_result;
 
     // (x) + (-y) = -(y-x), |y| > |x|
     // (-x) + (y) = -(x-y), |x| > |y| 
@@ -521,39 +597,59 @@ function functionSub(array_1, array_2, base, negative, type)
         }
     }
 
+    if (array_result[0] == "-")
+    {
+        memoria_calculo.innerHTML += "<br></br>Se o número for negativo é acrescentado um menos no começo = " + array_result;
+    }
+
+    memoria_calculo.innerHTML += "<br></br>O valor final da subtração é = " + array_result.join('');
+
     return array_result;
 }
 
 // Função que multiplica dois arrays, ambos de determinada base numérica (*Função Provisória*)
 function functionMulti(array_1, array_2, base, negative)
 {
-    var array_result = [], aux1 = "";
+    var array_result = [], aux1 = "", aux2 = "";
 
     // Converte números >= 10 para sua representação alfabética
+    numparaLetra(array_1);
     numparaLetra(array_2);
 
-    for (let i = 0; i < array_2.length; i++)
-    {
-        aux1 += array_2[i];
-    }
+    aux1 = array_1.join('');
 
-    for (let i = 0; i < parseInt(aux1, base); i++)
-    {   
-        array_result = functionSoma(array_1, array_result, base, negative);
-        if (array_result[0] == "-")
-        {
-            array_result.shift();
-        }
-    }
+    aux2 = array_2.join('');
+
+    array_result = parseInt(aux1, base) * parseInt(aux2, base);
+
+    array_result = array_result.toString(base);
+
+    array_result = array_result.split('');
+
+    // for (let i = 0; i < parseInt(aux1, base); i++)
+    // {   
+    //     array_result = functionSoma(array_1, array_result, base, negative);
+    //     if (array_result[0] == "-")
+    //     {
+    //         array_result.shift();
+    //     }
+    // }
 
     // Converte uma letra pra seu valor correspondente numérico
+    letraparaNum(array_1);
     letraparaNum(array_2);
+    letraparaNum(array_result);
+
+    // transformando os arrays em arrays de números
+    array_result.map((value, index) => {
+        array_result[index] = parseInt(value)
+    })
 
     return array_result;
 }
 
 // Função que divide dois arrays, ambos de determinada base numérica (*Função Provisória*)
-function functionDiv(divisor, dividendo, base)
+function functionDiv(dividendo, divisor, base)
 {
     var array_result = [];
 
@@ -563,21 +659,21 @@ function functionDiv(divisor, dividendo, base)
 
     var aux1 = "", aux2 = "";
 
-    for (let i = 0; i < divisor.length; i++)
-    {
-        aux1 += divisor[i];
-    }
+    aux1 = dividendo.join('');
 
-    for (let i = 0; i < dividendo.length; i++)
-    {
-        aux2 += dividendo[i];
-    }
+    aux2 = divisor.join('');
 
-    var numero = parseInt(aux2, base) / parseInt(aux1, base);
+    var numero = parseInt(aux1, base) / parseInt(aux2, base);
     numero = numero.toString(base);
     numero = numero.split("");
 
+    // Converte uma letra pra seu valor correspondente numérico
     letraparaNum(numero);
+
+    // transformando os arrays em arrays de números
+    numero.map((value, index) => {
+        numero[index] = parseInt(value)
+    })
 
     return array_result = numero;
 }
@@ -599,40 +695,38 @@ function normRacional(numerador, denominador, base)
     numparaLetra(numerador);
     numparaLetra(denominador);
 
-    // Clona os arrays em outras variáveis
-    for (let i = 0; i < numerador.length; i++)
-    {
-        aux1 += numerador[i];
-    }
-    for (let i = 0; i < denominador.length; i++)
-    {
-        aux2 += denominador[i];
-    }
+    aux1 = numerador.join('');
+
+    aux2 = denominador.join('');
+
+    aux1 = parseInt(aux1, base);
+
+    aux2 = parseInt(aux2, base);
 
     // Verifica qual número tem menor valor
-    if (parseInt(aux1, base) > parseInt(aux2, base))
+    if (aux1 > aux2)
     {
-        menor = parseInt(aux2, base);
+        menor = aux2;
     }
-    else if (parseInt(aux1, base) < parseInt(aux2, base))
+    else if (aux1 < aux2)
     {
-        menor = parseInt(aux1, base);
+        menor = aux1;
     }
     else
     {
-        menor = parseInt(aux1, base);
+        menor = aux1;
     }
 
     for (let i = 2; i <= menor; i++)
     {
-        if ((parseInt(aux1, base) % i == 0) && (parseInt(aux2, base) % i == 0))
+        if ((aux1 % i == 0) && (aux2 % i == 0))
         {
-            aux1 = (parseInt(aux1, base) / i);
-            aux2 = (parseInt(aux2, base) / i);
+            aux1 = (aux1 / i);
+            aux2 = (aux2 / i);
             menor /= i;
             
             // Se a fração ainda for divisível pelo mesmo número
-            if ((parseInt(aux1, base) % i == 0) && (parseInt(aux2, base) % i == 0))
+            if ((aux1 % i == 0) && (aux2 % i == 0))
             {
                 i--;
             }
@@ -642,19 +736,40 @@ function normRacional(numerador, denominador, base)
     aux1 = aux1.toString(base);
     aux2 = aux2.toString(base);
 
+    aux1 = aux1.split('');
+    aux2 = aux2.split('');
+
+    // Converte uma letra pra seu valor correspondente numérico
+    letraparaNum(aux1);
+    letraparaNum(aux2);
+    letraparaNum(numerador);
+    letraparaNum(denominador);
+
+    // transformando os arrays em arrays de números
+    aux1.map((value, index) => {
+        aux1[index] = parseInt(value)
+    })
+    aux2.map((value, index) => {
+        aux2[index] = parseInt(value)
+    })
+
     for (let i = 0; i < aux1.length; i++)
     {
         array_result.push(aux1[i]);
     }
 
-    array_result.push(":");
+    // Se o denominador for um, o resultado será apenas o numerador
+    if ((aux2 == 1) && (aux2.length == 1))
+    {
+        return array_result;
+    }
+
+    array_result.push(":");    
 
     for (let i = 0; i < aux2.length; i++)
     {
         array_result.push(aux2[i]);
     }
-
-    letraparaNum(array_result);
 
     // É adicionado o sinal de menos "-" caso o numerador for negativo
     if (negativo == 1)
