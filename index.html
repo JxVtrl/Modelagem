@@ -36,7 +36,7 @@
                     </li>
                     <li>
                         <a href="https://github.com/TheVicttor" target="_blank">
-                            João Victtor
+                            João Victor
                         </a>
                     </li>
                     <li>
@@ -54,9 +54,21 @@
         </div>
     </header>
     <main>
+        
+    <button id="sourcecode" class="button">Ver Código</button>
+    
+    <div id="div_sourcecode">
+        <script src="https://gist.github.com/andreb308/79d44d838fd327bf9d2a859133691a83.js"></script>" 
+    </div>
+
+ <div id="container_operacao">
+
+    <!--Caixa Esquerda-->
+    <div id="caixaSelect">
+        
         <div id="select">
-            <button class="button" id="sum_select">+</button>
-            <button class="button" id="sub_select">-</button>
+            <button class="button" id="sum_select">Soma</button>
+            <button class="button" id="sub_select">Subtração</button>
         </div>
 
         <input 
@@ -73,13 +85,17 @@
 
         <div id="input_father" class="hidden">
             <div id="input_div"></div> 
-            <button id="btn_calculate">Calcular</button>
+            <button id="btn_calculate" class="button">Calcular</button>
         </div>
 
         <div id="result_div"></div>
+    </div>
 
+    <!--Caixa Direita-->
         <div id="memoria_calculo"></div>
-    </main>
+
+    </div>
+ </main>
 
     <div id="ajuda" class="modal">
         <div id="ajuda_txt"class="modal__content">

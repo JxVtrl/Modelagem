@@ -7,6 +7,8 @@ var calculate_btn = document.getElementById('btn_calculate')
 
 var ajuda_txt = document.getElementById('ajuda_txt')
 var slider_base = document.getElementById('slider_base')
+var div_sourcecode = document.getElementById('div_sourcecode')
+var is_sourcecode_showing = false
 
 var result_div = document.getElementById('result_div')
 
@@ -19,6 +21,7 @@ var memoria_calculo = document.getElementById('memoria_calculo');
 var select_sum = sum_select.addEventListener('click', () => selectType(type = 'sum'))
 var select_sub = sub_select.addEventListener('click', () => selectType(type = 'sub'))
 var slider = slider_base.addEventListener('click', () => base_select.value = slider_base.value) // Quando escolher a base pela barra, atualiza o valor no campo
+var toggle_sourcecode = sourcecode.addEventListener('click', () => toggleSourceCode(is_sourcecode_showing   ))
 
 // Selecionando o tipo de operação
 function selectType(type) {
@@ -350,11 +353,11 @@ Casos do operador -:
 
         if (typeOperador == "sum")
         {
-            memoria_calculo.innerHTML = "Números a somar: " + array_1.join('') + ":" + denominador_1.join('') + " + " + array_2.join('') + ":" + denominador_2.join('');
+            memoria_calculo.innerHTML = "<h3>Memória de Cálculo</h3> <br> Números a somar: " + array_1.join('') + ":" + denominador_1.join('') + " + " + array_2.join('') + ":" + denominador_2.join('');
         }
         else
         {
-            memoria_calculo.innerHTML = "Números a subtrair: " + array_1.join('') + ":" + denominador_1.join('') + " - " + array_2.join('') + ":" + denominador_2.join('');
+            memoria_calculo.innerHTML = "<h3>Memória de Cálculo</h3> <br> Números a subtrair: " + array_1.join('') + ":" + denominador_1.join('') + " - " + array_2.join('') + ":" + denominador_2.join('');
         }
         
         memoria_calculo.innerHTML += "<br></br>Separa o numerador e denominador em dois arrays distintos: <br></br>";
@@ -378,7 +381,7 @@ Casos do operador -:
         }
         else
         {
-            memoria_calculo.innerHTML = "Números a somar: " + array_1.join('') + " + " + array_2.join('');
+            memoria_calculo.innerHTML = "<h3>Memória de Cálculo</h3> <br> Números a somar: " + array_1.join('') + " + " + array_2.join('');
 
             array_result = functionSoma(array_1, array_2, base, negative);
         }
@@ -393,7 +396,7 @@ Casos do operador -:
         }
         else
         {
-            memoria_calculo.innerHTML = "Números a subtrair: " + array_1.join('') + " - " + array_2.join('');
+            memoria_calculo.innerHTML = "<h3>Memória de Cálculo</h3> <br> Números a subtrair: " + array_1.join('') + " - " + array_2.join('');
 
             array_result = functionSub(array_1, array_2, base, negative, type);
         }
@@ -402,7 +405,7 @@ Casos do operador -:
     // Se o numerador for zero, o resultado final será zero
     if (numerador == 0 && numerador.length == 1)
     {
-        result_div.innerHTML = 0;
+        result_div.innerHTML = "Resultado: 0";
         return;
     }
 
@@ -422,7 +425,7 @@ Casos do operador -:
     }
 
     var result = array_result.join('')
-    result_div.innerHTML = result
+    result_div.innerHTML = "Resultado: " + result
 
     return;
 }
@@ -815,4 +818,18 @@ function letraparaNum(array)
     }
 
     return;
+}
+
+function toggleSourceCode(is_SC) {
+    if (is_SC) {
+        document.getElementById('container_operacao').style.display = "flex"
+        div_sourcecode.style.display = "none"
+        is_sourcecode_showing = false
+        document.getElementById('sourcecode').innerHTML = "Ver Código"
+    } else {
+        document.getElementById('container_operacao').style.display = "none"
+        div_sourcecode.style.display = "block"
+        is_sourcecode_showing = true
+        document.getElementById('sourcecode').innerHTML = "Voltar"
+    }
 }
