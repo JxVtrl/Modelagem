@@ -56,6 +56,7 @@ function selectType(type) {
     <br><br>
     <b>LEMBRETE:</b> Em bases maiores do que 10, será possível utilizar letras para representar algarismos maiores que 9, de forma que <i>9 + 1 = A</i>, por exemplo. O limite de letras depende do valor da base. Na base máxima suportada, a base 36, aceita-se algarismos de 0 até 9, além das letras de A até Z, que representam algarismos de 10 a 35.
     </p>
+    <p>Frações também são suportadas, basta inseri-las no formato "Numerador:Denominador"</p>
     
     
     <a href="#" class="modal__close">&times;</a>
@@ -64,8 +65,13 @@ function selectType(type) {
 }
 
 // Seleção de base
-var base_listener = base_select.addEventListener("input", () => base = parseInt(base_select.value))
-var base_update_slider = slider_base.addEventListener('click', () => base = base = parseInt(base_select.value)) // Atualiza de fato a base de cálculo quando alterada via slider
+var base_listener = base_select.addEventListener("input", () => {
+    if (base_select.value > 36) { base_select.value = 36; } // Substitui por 36 caso o valor seja maior que o máximo.
+
+    base = parseInt(base_select.value)
+    slider_base.value = parseInt(base_select.value) // Atualiza o slider caso a base seja inserida via texto
+})
+var base_update_slider = slider_base.addEventListener('click', () => base = parseInt(base_select.value)) // Atualiza de fato a base de cálculo quando alterada via slider
 
 // Botão de calcular
 var btn_listener = calculate_btn.addEventListener("click", () => {
@@ -77,8 +83,10 @@ var btn_listener = calculate_btn.addEventListener("click", () => {
 
     const negative = validateValue(array_1, array_2)
 
+    memoria_calculo.innerHTML = "" // Limpa sempre a memória de cálculo antes de fazer o cálculo em si. Útil caso retorne um erro após uma tentativa de sucesso.
+
     if (!first_value || !second_value || !base_select.value)
-        result_div.innerHTML = 'Preencha todos os campos'
+        result_div.innerHTML = 'Preencha todos os campos.'
     else {
         if (negative) 
             calculateResult(array_1, array_2, negative)
@@ -377,6 +385,7 @@ Casos do operador -:
             var numerador = functionSoma(multiArray1, multiArray2, base, negative);
             memoria_calculo.innerHTML += "<br></br>O racional é então = " + numerador.join('') + ":" + produtoD.join('');
             array_result = normRacional(numerador, produtoD, base);
+            numparaLetra(array_result)
             memoria_calculo.innerHTML += "<br></br>Realizando a normalização deste número racional teremos como resultado final = " + array_result.join('');
         }
         else
@@ -392,6 +401,7 @@ Casos do operador -:
             var numerador = functionSub(multiArray1, multiArray2, base, negative, type);
             memoria_calculo.innerHTML += "<br></br>O racional é então = " + numerador.join('') + ":" + produtoD.join('');
             array_result = normRacional(numerador, produtoD, base);
+            numparaLetra(array_result)
             memoria_calculo.innerHTML += "<br></br>Realizando a normalização deste número racional teremos como resultado final = " + array_result.join('');
         }
         else
@@ -500,7 +510,14 @@ function functionSoma(array_1, array_2, base, negative)
         memoria_calculo.innerHTML += "<br></br>Se o valor for negativo é acrescentado um menos no começo = " + array_result;
     }
 
-    memoria_calculo.innerHTML += "<br></br>O valor final da soma é = " + array_result.join('');
+    if (precisarConverter(array_result)) // Caso algum elemento do array tenha que ser convertido para letra, o programa faz a conversão e a explicita na memória. Caso contrário, apenas menciona o resultado final.
+    {
+        numparaLetra(array_result);
+        memoria_calculo.innerHTML += "<br></br>Convertendo os elementos iguais a ou maiores que a base, o valor da soma é = " + array_result.join('');
+    }
+    else {
+        memoria_calculo.innerHTML += "<br></br>O valor da soma é = " + array_result.join('');
+    }
 
     return array_result;
 }
@@ -565,7 +582,7 @@ function functionSub(array_1, array_2, base, negative, type)
         // E também não precisa de "-"(menos) se for só um zero, logo pode dar return
         if (array_result.length == 1)
         {
-            memoria_calculo.innerHTML += "O valor final da subração é zero(" + array_result + ")";
+            memoria_calculo.innerHTML += "O valor final da subtração é zero(" + array_result + ")";
             return array_result;
         }
         array_result.shift()
@@ -605,7 +622,14 @@ function functionSub(array_1, array_2, base, negative, type)
         memoria_calculo.innerHTML += "<br></br>Se o número for negativo é acrescentado um menos no começo = " + array_result;
     }
 
-    memoria_calculo.innerHTML += "<br></br>O valor final da subtração é = " + array_result.join('');
+    if (precisarConverter(array_result))  // Caso algum elemento do array tenha que ser convertido para letra, o programa faz a conversão e a explicita na memória. Caso contrário, apenas menciona o resultado final.
+    {
+        numparaLetra(array_result);
+        memoria_calculo.innerHTML += "<br></br>Convertendo os elementos iguais a ou maiores que a base, o valor da subtração é = " + array_result.join('');
+    }
+    else {
+        memoria_calculo.innerHTML += "<br></br>O valor da subtração é = " + array_result.join('');
+    }
 
     return array_result;
 }
@@ -832,4 +856,10 @@ function toggleSourceCode(is_SC) {
         is_sourcecode_showing = true
         document.getElementById('sourcecode').innerHTML = "Voltar"
     }
+}
+
+function precisarConverter(array) { // true: precisa converter de número para letra; false: não precisa
+    return !(array.every(function (e) {
+        return e <= 9;
+    }));
 }

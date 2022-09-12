@@ -129,6 +129,7 @@ main {
 }
 
 #memoria_calculo {
+  text-align: justify;
   height: 50vh;
   color: white;
   width: 40%;
@@ -178,6 +179,7 @@ div div h3 { /* Título dentro da memória de cálculo */
 .input_value:hover
 {
     background-color: #dde7e4;
+    cursor: text;
 }
 
 #basen {
@@ -193,6 +195,7 @@ div div h3 { /* Título dentro da memória de cálculo */
 
 #basen:hover {
     background-color: #dde7e4;
+    cursor: text;
 }
 
 #result_div {
